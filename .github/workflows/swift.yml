@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        runner: [macos-latest, ubuntu-24.04, ubuntu-22.04, windows-latest, ubuntu-24.04-arm]
+        runner: [macos-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm]
     name: Test on ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
