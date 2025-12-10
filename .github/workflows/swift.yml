@@ -17,7 +17,9 @@ jobs:
     name: Test on ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
+      with:
+        submodules: 'true'
     - name: Build
       run: swift build -v
     - name: Run tests
