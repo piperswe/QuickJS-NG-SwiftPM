@@ -1,6 +1,6 @@
 import QuickJSNG
 
-class QJSValue: CustomStringConvertible {
+class QJSValue: CustomStringConvertible, Equatable {
   enum Tag {
     case bigint, symbol, string, module, functionBytecode, object, int, bool, null, undefined,
       uninitialized, catchOffset, exception, shortBigint, float64
@@ -305,5 +305,59 @@ class QJSValue: CustomStringConvertible {
 
   var isNaN: Bool {
     return JS_VALUE_IS_NAN(inner)
+  }
+
+  func toBool() -> Bool {
+    return JS_ToBool(context.inner, inner) != 0
+  }
+
+  func toNumber() -> QJSValue {
+    return context.value(inner: JS_ToNumber(context.inner, inner))
+  }
+
+  func toInt32() -> Int32 {
+    var res: Int32 = 0
+    JS_ToInt32(context.inner, &res, inner)
+    return res
+  }
+
+  func toInt64(allowBigInt: Bool = true) -> Int64 {
+    var res: Int64 = 0
+    if allowBigInt {
+      JS_ToInt64Ext(context.inner, &res, inner)
+    } else {
+      JS_ToInt64(context.inner, &res, inner)
+    }
+    return res
+  }
+
+  func toFloat64() -> Float64 {
+    var res: Float64 = 0
+    JS_ToFloat64(context.inner, &res, inner)
+    return res
+  }
+
+  func toBigInt64() -> Int64 {
+    var res: Int64 = 0
+    JS_ToBigInt64(context.inner, &res, inner)
+    return res
+  }
+
+  func toBigUInt64() -> UInt64 {
+    var res: UInt64 = 0
+    JS_ToBigUint64(context.inner, &res, inner)
+    return res
+  }
+
+  func equal(to: QJSValue) -> Bool {
+    return JS_IsEqual(context.inner, inner, to.inner) != 0
+  }
+
+  func strictEqual(to: QJSValue) -> Bool {
+    return JS_IsStrictEqual(context.inner, inner, to.inner)
+  }
+
+  static func == (lhs: QJSValue, rhs: QJSValue) -> Bool {
+    return lhs.strictEqual(to: rhs)
   }
 }

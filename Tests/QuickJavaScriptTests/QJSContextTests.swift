@@ -8,6 +8,7 @@ import Testing
     let context = QJSContext(runtime: runtime)
     _ = context.inner
     #expect(context.runtime === runtime)
+    #expect(context.currentException == nil)
   }
 
   @Test func canGetNull() {
@@ -16,6 +17,7 @@ import Testing
     let nullValue = context.null
     #expect(nullValue.tag == .null)
     #expect(nullValue.description == "null")
+    #expect(context.currentException == nil)
   }
 
   @Test func canGetUndefined() {
@@ -24,6 +26,7 @@ import Testing
     let undefinedValue = context.undefined
     #expect(undefinedValue.tag == .undefined)
     #expect(undefinedValue.description == "undefined")
+    #expect(context.currentException == nil)
   }
 
   @Test func canGetBooleanValues() {
@@ -35,6 +38,7 @@ import Testing
     #expect(trueValue.tag == .bool)
     #expect(falseValue.description == "false")
     #expect(trueValue.description == "true")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateBoolFromSwiftBool() {
@@ -44,6 +48,7 @@ import Testing
     let falseValue = context.value(bool: false)
     #expect(trueValue.description == "true")
     #expect(falseValue.description == "false")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateInt32Value() {
@@ -53,6 +58,7 @@ import Testing
     #expect(value.tag == .int)
     #expect(value.int32() == 42)
     #expect(value.description == "42")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateNegativeInt32Value() {
@@ -62,6 +68,47 @@ import Testing
     #expect(value.tag == .int)
     #expect(value.int32() == -123)
     #expect(value.description == "-123")
+    #expect(context.currentException == nil)
+  }
+
+  @Test func canCreateInt64Value() {
+    let runtime = QJSRuntime()
+    let context = runtime.newContext()
+    let value = context.value(int64: 42)
+    #expect(value.tag == .int)
+    #expect(value.int32() == 42)
+    #expect(value.description == "42")
+    #expect(context.currentException == nil)
+  }
+
+  @Test func canCreateUint32Value() {
+    let runtime = QJSRuntime()
+    let context = runtime.newContext()
+    let value = context.value(uint32: 42)
+    #expect(value.tag == .int)
+    #expect(value.int32() == 42)
+    #expect(value.description == "42")
+    #expect(context.currentException == nil)
+  }
+
+  @Test func canCreateBigint64Value() {
+    let runtime = QJSRuntime()
+    let context = runtime.newContext()
+    let value = context.value(bigint64: 42)
+    #expect(value.tag == .shortBigint)
+    #expect(value.shortBigInt() == 42)
+    #expect(value.description == "42")
+    #expect(context.currentException == nil)
+  }
+
+  @Test func canCreateBiguint64Value() {
+    let runtime = QJSRuntime()
+    let context = runtime.newContext()
+    let value = context.value(biguint64: 42)
+    #expect(value.tag == .shortBigint)
+    #expect(value.shortBigInt() == 42)
+    #expect(value.description == "42")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateFloat64Value() {
@@ -70,6 +117,16 @@ import Testing
     let value = context.value(float64: 3.14159)
     #expect(value.tag == .float64)
     #expect(value.float64() == 3.14159)
+    #expect(context.currentException == nil)
+  }
+
+  @Test func canCreateNumberValue() {
+    let runtime = QJSRuntime()
+    let context = runtime.newContext()
+    let value = context.value(number: 3)
+    #expect(value.tag == .int)
+    #expect(value.int32() == 3)
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateShortBigIntValue() {
@@ -78,6 +135,7 @@ import Testing
     let value = context.value(shortBigInt: 1000)
     #expect(value.tag == .shortBigint)
     #expect(value.shortBigInt() == 1000)
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateStringValue() {
@@ -87,6 +145,7 @@ import Testing
     #expect(value.tag == .string)
     #expect(value.string() == "Hello, World!")
     #expect(value.description == "Hello, World!")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateEmptyStringValue() {
@@ -95,6 +154,7 @@ import Testing
     let value = context.value(string: "")
     #expect(value.tag == .string)
     #expect(value.string() == "")
+    #expect(context.currentException == nil)
   }
 
   @Test func canCreateUnicodeStringValue() {
@@ -103,6 +163,7 @@ import Testing
     let value = context.value(string: "Hello 👋 世界 🌍")
     #expect(value.tag == .string)
     #expect(value.string() == "Hello 👋 世界 🌍")
+    #expect(context.currentException == nil)
   }
 
   @Test func canEvalSimpleExpression() {
@@ -111,6 +172,7 @@ import Testing
     let result = context.eval(code: "1 + 1")
     #expect(result.int32() == 2)
     #expect(result.description == "2")
+    #expect(context.currentException == nil)
   }
 
   @Test func canEvalWithCustomFilename() {
@@ -118,6 +180,7 @@ import Testing
     let context = runtime.newContext()
     let result = context.eval(code: "2 * 3", filename: "test.js")
     #expect(result.int32() == 6)
+    #expect(context.currentException == nil)
   }
 
   @Test func canEvalStringExpression() {
@@ -125,5 +188,6 @@ import Testing
     let context = runtime.newContext()
     let result = context.eval(code: "'Hello' + ' ' + 'World'")
     #expect(result.string() == "Hello World")
+    #expect(context.currentException == nil)
   }
 }

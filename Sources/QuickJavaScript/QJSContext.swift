@@ -58,19 +58,35 @@ class QJSContext {
   }
 
   func value(bool: Bool) -> QJSValue {
-    if bool {
-      return jsTrue
-    } else {
-      return jsFalse
-    }
+    return value(inner: JS_NewBool(inner, bool))
   }
 
   func value(int32: Int32) -> QJSValue {
-    return value(int32: int32, tag: .int)
+    return value(inner: JS_NewInt32(inner, int32))
+  }
+
+  func value(int64: Int64) -> QJSValue {
+    return value(inner: JS_NewInt64(inner, int64))
   }
 
   func value(float64: Float64) -> QJSValue {
-    return value(u: JSValueUnion(float64: float64), tag: .float64)
+    return value(inner: JS_NewFloat64(inner, float64))
+  }
+
+  func value(number: Float64) -> QJSValue {
+    return value(inner: JS_NewNumber(inner, number))
+  }
+
+  func value(uint32: UInt32) -> QJSValue {
+    return value(inner: JS_NewUint32(inner, uint32))
+  }
+
+  func value(bigint64: Int64) -> QJSValue {
+    return value(inner: JS_NewBigInt64(inner, bigint64))
+  }
+
+  func value(biguint64: UInt64) -> QJSValue {
+    return value(inner: JS_NewBigUint64(inner, biguint64))
   }
 
   func value(shortBigInt: Int32) -> QJSValue {
@@ -105,6 +121,15 @@ class QJSContext {
       return JS_NewAtomLen(
         self.inner, bytes.assumingMemoryBound(to: CChar.self).baseAddress, byteCountWithoutFinalNull
       )
+    }
+  }
+
+  var currentException: QJSValue? {
+    let val = value(inner: JS_GetException(inner))
+    if val.tag != .uninitialized {
+      return val
+    } else {
+      return nil
     }
   }
 }

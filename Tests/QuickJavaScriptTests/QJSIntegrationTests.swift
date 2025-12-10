@@ -9,6 +9,7 @@ import Testing
     let result = context.eval(code: "1 + 1")
     #expect(result.int32() == 2)
     #expect(result.description == "2")
+    #expect(context.currentException == nil)
   }
 
   @Test func canRunMoreComplexJavaScript() {
@@ -25,6 +26,7 @@ import Testing
           fib(20)
         """)
     #expect(result.int32() == 6765)
+    #expect(context.currentException == nil)
   }
 
   @Test func canManipulateObjectsFromSwift() {
@@ -43,6 +45,7 @@ import Testing
     #expect(obj.getProperty(str: "name").string() == "Swift")
     #expect(obj.getProperty(str: "version").int32() == 6)
     #expect(obj.getProperty(str: "stable").bool() == true)
+    #expect(context.currentException == nil)
   }
 
   @Test func canWorkWithArrays() {
@@ -58,6 +61,7 @@ import Testing
     #expect(array.getProperty(uint32: 0).int32() == 10)
     #expect(array.getProperty(uint32: 1).int32() == 20)
     #expect(array.getProperty(uint32: 2).int32() == 30)
+    #expect(context.currentException == nil)
   }
 
   @Test func canCallJavaScriptFunctions() {
@@ -68,6 +72,7 @@ import Testing
     let result = context.eval(code: "add(5, 7)")
 
     #expect(result.int32() == 12)
+    #expect(context.currentException == nil)
   }
 
   @Test func multipleContextsShareRuntime() {
@@ -78,6 +83,8 @@ import Testing
     #expect(context1.runtime === runtime)
     #expect(context2.runtime === runtime)
     #expect(context1.runtime === context2.runtime)
+    #expect(context1.currentException == nil)
+    #expect(context2.currentException == nil)
   }
 
   @Test func memoryManagement() {
@@ -95,6 +102,7 @@ import Testing
     // Should still work after GC
     let result = context.eval(code: "arr.length")
     #expect(result.int32() == 10000)
+    #expect(context.currentException == nil)
   }
 
   @Test func errorHandling() {
@@ -103,6 +111,7 @@ import Testing
 
     let result = context.eval(code: "throw new Error('test error')")
     #expect(result.tag == .exception)
+    #expect(context.currentException?.description == "Error: test error")
   }
 
   @Test func workingWithDifferentTypes() {
@@ -129,5 +138,6 @@ import Testing
     #expect(bool.bool() == true)
     #expect(nullVal.tag == .null)
     #expect(undefinedVal.tag == .undefined)
+    #expect(context.currentException == nil)
   }
 }
