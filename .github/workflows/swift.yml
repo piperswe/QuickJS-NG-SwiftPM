@@ -5,22 +5,23 @@ name: Swift
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
     strategy:
       matrix:
-        runner: [macos-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm]
+        runner:
+          [macos-26, macos-15, ubuntu-24.04, ubuntu-22.04, ubuntu-24.04-arm]
     name: Test on ${{ matrix.runner }}
     runs-on: ${{ matrix.runner }}
     steps:
-    - uses: actions/checkout@v6
-      with:
-        submodules: 'true'
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+      - uses: actions/checkout@v6
+        with:
+          submodules: "true"
+      - name: Build
+        run: swift build -v
+      - name: Run tests
+        run: swift test -v
